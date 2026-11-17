@@ -1,0 +1,15 @@
+{
+  "name": "cloider-dockerized-app",
+  "version": "1.0.0",
+  "description": "Cloider App Engine demo — a containerized Node.js app that inspects its own container",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

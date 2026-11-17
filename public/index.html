@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dockerized App · Cloider App Engine</title>
+  <meta name="description" content="A containerized Node.js app built from its own Dockerfile on node:alpine, running on Cloider App Engine." />
+  <meta name="theme-color" content="#060a14" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <header class="nav">
+    <a class="brand" href="/">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs>
+          <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#3b82f6" />
+            <stop offset="1" stop-color="#22d3ee" />
+          </linearGradient>
+        </defs>
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="url(#bm)" />
+        <path d="M21.5 11.2a7 7 0 1 0 0 9.6" fill="none" stroke="#07080f" stroke-width="3.2" stroke-linecap="round" />
+        <circle cx="22" cy="16" r="2" fill="#07080f" />
+      </svg>
+      <span>Cloider <strong>App Engine</strong></span>
+    </a>
+    <span class="nav-tag">Dockerized app</span>
+    <span class="status" id="status"><span class="pulse"></span><span id="status-text">Connecting…</span></span>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="chip">Demo 03</span> Dockerized app</p>
+        <h1>Your Dockerfile.<br /><span class="gradient-text">Running anywhere.</span></h1>
+        <p class="lede">
+          This app brings its own <code>Dockerfile</code> built on <code>node:alpine</code>.
+          Cloider App Engine builds the image and runs it as a container — and this page is
+          looking at that container <em>from the inside</em>.
+        </p>
+        <div class="hero-meta">
+          <div><span>Container</span><strong class="mono" id="hero-id">—</strong></div>
+          <div><span>Total requests</span><strong id="hero-total">—</strong></div>
+          <div><span>Uptime</span><strong id="hero-uptime">—</strong></div>
+        </div>
+      </div>
+
+      <div class="stack-wrap" aria-hidden="true">
+        <div class="stack">
+          <div class="layer l1"><span>alpine</span></div>
+          <div class="layer l2"><span>node</span></div>
+          <div class="layer l3"><span>app</span></div>
+          <div class="layer l4"><span>run</span></div>
+        </div>
+        <ol class="stack-legend">
+          <li><i class="k4"></i><div><strong>CMD node server.js</strong><small>Runs as the unprivileged <code>node</code> user</small></div></li>
+          <li><i class="k3"></i><div><strong>COPY . .</strong><small>Your application source</small></div></li>
+          <li><i class="k2"></i><div><strong>Node.js runtime</strong><small>Shipped in the official image</small></div></li>
+          <li><i class="k1"></i><div><strong>Alpine Linux</strong><small>A tiny, security-minded base OS</small></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- INSIDE -->
+    <section class="section" id="inside">
+      <div class="section-head">
+        <p class="eyebrow">Read live from <code>/etc</code>, <code>/proc</code> &amp; <code>/sys/fs/cgroup</code></p>
+        <h2>Inside the container</h2>
+        <p class="sub">The server inspects its own environment on every page load. Nothing here is hard-coded.</p>
+      </div>
+
+      <div class="tiles" id="tiles">
+        <article class="tile"><span class="tile-label">Container</span><strong class="tile-value mono" data-k="containerId">—</strong><span class="tile-foot">Container hostname</span></article>
+        <article class="tile"><span class="tile-label">Operating system</span><strong class="tile-value" data-k="os">—</strong><span class="tile-foot" data-k="kernel">—</span></article>
+        <article class="tile"><span class="tile-label">Runtime</span><strong class="tile-value" data-k="node">—</strong><span class="tile-foot" data-k="arch">—</span></article>
+        <article class="tile"><span class="tile-label">Running as</span><strong class="tile-value" data-k="user">—</strong><span class="tile-foot" data-k="uid">—</span></article>
+        <article class="tile"><span class="tile-label">Process ID</span><strong class="tile-value" data-k="pid">—</strong><span class="tile-foot" data-k="pidNote">—</span></article>
+        <article class="tile"><span class="tile-label">CPU</span><strong class="tile-value" data-k="cpu">—</strong><span class="tile-foot" data-k="cpuNote">—</span></article>
+        <article class="tile"><span class="tile-label">Memory limit</span><strong class="tile-value" data-k="mem">—</strong><span class="tile-foot" data-k="memNote">—</span></article>
+        <article class="tile"><span class="tile-label">Containerized?</span><strong class="tile-value" data-k="inside">—</strong><span class="tile-foot" data-k="how">—</span></article>
+      </div>
+
+      <div class="env">
+        <span class="env-title">Environment</span>
+        <div class="env-vars" id="env-vars"></div>
+        <span class="env-built" id="built"></span>
+      </div>
+    </section>
+
+    <!-- METRICS -->
+    <section class="section" id="metrics">
+      <div class="section-head row">
+        <div>
+          <p class="eyebrow">Sampled every second</p>
+          <h2>Live container metrics</h2>
+          <p class="sub">Hover the charts to read any second of the last two minutes.</p>
+        </div>
+        <button class="btn" id="traffic-btn" type="button">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 2 4 11h5l-1 7 7-9h-5l1-7Z" fill="currentColor"/></svg>
+          Send 300 requests
+        </button>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span>CPU</span><strong id="kpi-cpu">—</strong></div>
+        <div class="kpi"><span id="kpi-mem-label">Memory</span><strong id="kpi-mem">—</strong></div>
+        <div class="kpi"><span>Event-loop lag</span><strong id="kpi-lag">—</strong></div>
+        <div class="kpi"><span>Requests / sec</span><strong id="kpi-rps">—</strong></div>
+        <div class="kpi"><span>Total requests</span><strong id="kpi-total">—</strong></div>
+      </div>
+
+      <div class="charts">
+        <figure class="chart-card">
+          <figcaption><strong>Memory</strong><span id="chart-mem-sub">MB</span></figcaption>
+          <div class="chart" id="chart-mem"></div>
+        </figure>
+        <figure class="chart-card">
+          <figcaption><strong>CPU</strong><span>Process CPU time, % of one core</span></figcaption>
+          <div class="chart" id="chart-cpu"></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- DOCKERFILE -->
+    <section class="section" id="dockerfile">
+      <div class="section-head">
+        <p class="eyebrow">Served from <code>/app/Dockerfile</code> inside the image</p>
+        <h2>The recipe that built this container</h2>
+      </div>
+      <div class="df-wrap">
+        <div class="code-card">
+          <div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Dockerfile</span></div>
+          <pre class="code" id="df-code"><code>Loading…</code></pre>
+        </div>
+        <ul class="why">
+          <li>
+            <span class="why-k">FROM node:alpine</span>
+            <p>Starts from the official Node.js image on Alpine Linux — a small footprint means faster pulls and fewer packages to patch.</p>
+          </li>
+          <li>
+            <span class="why-k">COPY package*.json → RUN npm ci</span>
+            <p>Dependencies are installed in their own layer, so rebuilds that only touch code reuse the cache.</p>
+          </li>
+          <li>
+            <span class="why-k">USER node</span>
+            <p>The app drops root privileges before starting. Check the “Running as” tile above.</p>
+          </li>
+          <li>
+            <span class="why-k">HEALTHCHECK</span>
+            <p>Probes <code>/health</code> so the runtime knows the app is actually serving, not just started.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Deployed on <strong>Cloider App Engine</strong> · dockerized-app demo</span>
+    <span class="served-by"><span class="served-dot"></span><span class="served-label">Response from:</span> <strong id="served-by">__HOSTNAME__</strong></span>
+  </footer>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
